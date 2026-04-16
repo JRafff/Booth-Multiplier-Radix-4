@@ -57,7 +57,10 @@ Il tipo più elementare di codifica Booth migliorata è proprio questa base 4, p
 
 ## 4. L'Albero di Wallace (Wallace Tree Compression)
 
-La codifica Booth affronta il primo aspetto dell'ottimizzazione: ridurre il numero di prodotti parziali. Tuttavia, il ritardo di propagazione del riporto (carry propagation delay) degli accumulatori incide ancora significativamente sulle prestazioni. 
+La codifica Booth affronta il primo aspetto dell'ottimizzazione: ridurre il numero di prodotti parziali. Tuttavia, il ritardo di propagazione del riporto (carry propagation delay) degli accumulatori incide ancora significativamente sulle prestazioni. Qui vediamo lo schema utilizzando semplici adder per le somme parziali:
+
+![Radix-4 Booth Multiplier](image_bffb0020.png)
+*(Multiplier Booth Radix-4 with RCA)*
 
 Se si utilizza la somma diretta, il risultato del bit corrente dipende dal riporto del bit precedente. Questo rende l'intero processo seriale e, maggiore è la larghezza del bus, maggiore sarà il ritardo. La chiave per l'ottimizzazione è **eliminare le catene di riporto e parallelizzare l'operazione**.
 
@@ -73,7 +76,7 @@ $$C_i = A_i B_i + C_{i-1}(A_i + B_i)$$
 Il vero vantaggio del CSA non risiede nella logica interna, ma in come viene interconnesso nel circuito. Per capirlo, supponiamo di dover sommare tre numeri a 4 bit: $A[3:0]$, $B[3:0]$ e $C[3:0]$.
 
 #### Approccio Seriale (Inefficiente)
-Nell'addizione tradizionale a propagazione di riporto (Ripple Carry), l'addizione del primo livello presenta un ritardo causato dalla catena dei riporti, indicata dalle frecce rosse. 
+Nell'addizione tradizionale a propagazione di riporto (Ripple Carry), l'addizione del primo livello presenta un ritardo causato dalla catena dei riporti. 
 
 ![Ripple Carry Adder Chain](image_c05400.png)
 *(Catena di riporto in un sommatore seriale: il ritardo cresce linearmente con il numero di bit)*
@@ -90,10 +93,10 @@ Come mostrato nello schema, il primo stadio dei quattro CSA è **completamente p
 
 Applicato al nostro moltiplicatore, il metodo Carry-Save viene utilizzato per raggruppare i prodotti parziali generati da Booth in insiemi di tre. Le uscite (vettori di Somma e Riporto) di ogni stadio vengono a loro volta compresse a cascata, formando una struttura ad albero: l'**Albero di Wallace** (Wallace Tree).
 
-Nei moltiplicatori industriali ad alte prestazioni, per bilanciare meglio i percorsi dei segnali e ridurre ulteriormente gli stadi dell'albero, si utilizzano spesso anche **Compressori 4-2**. Questi blocchi accettano quattro prodotti parziali in ingresso e restituiscono due uscite, gestendo i riporti intermedi internamente in modo ottimizzato.
-
 ![4-2 Compressor Logic Schematic](image_c0587f.png)
 *(Implementazione a livello di porte logiche di un Compressore 4-2)*
+
+Nei moltiplicatori industriali ad alte prestazioni, per bilanciare meglio i percorsi dei segnali e ridurre ulteriormente gli stadi dell'albero, si utilizzano spesso anche **Compressori 4-2**. Questi blocchi accettano quattro prodotti parziali in ingresso e restituiscono due uscite, gestendo i riporti intermedi internamente in modo ottimizzato.
 
 ### Lo Stadio Finale (Final Addition)
 Il processo di compressione nell'Albero di Wallace continua in modo puramente combinatorio e parallelo finché non si raggiungono esattamente **due righe finali** (un vettore *Sum* e un vettore *Carry*). 
