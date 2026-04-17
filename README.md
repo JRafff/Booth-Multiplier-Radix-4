@@ -8,7 +8,7 @@ Questo repository contiene l'implementazione hardware (RTL) di un moltiplicatore
 
 Nella moltiplicazione binaria tradizionale, il numero di prodotti parziali generati è esattamente uguale al numero di bit del moltiplicatore. 
 
-![Standard Multiplication](image_bff6a4.png)
+![Standard Multiplication](img/image_bff6a4.png)
 *(Rappresentazione della generazione dei prodotti parziali in una moltiplicazione standard)*
 
 Come mostrato nell'immagine, per ogni bit del moltiplicatore viene generato un prodotto parziale (che può essere il moltiplicando stesso o zero). Il problema principale nella progettazione hardware è che il numero di sommatori necessari dipende direttamente dal numero di prodotti parziali. Pertanto, sommare $N$ prodotti parziali in cascata introduce un notevole ritardo critico (critical path) e consuma molta area sul silicio.
@@ -41,7 +41,7 @@ La relazione tra ogni gruppo di 3 bit consecutivi determina l'operazione da eseg
 
 La seguente tabella di verità mostra le operazioni necessarie:
 
-![Radix-4 Booth Encoding Truth Table](image_bffb00.png)
+![Radix-4 Booth Encoding Truth Table](img/image_bffb00.png)
 *(Tabella di look-up per la codifica Booth Radix-4)*
 
 Basandosi su queste combinazioni, il prodotto parziale può assumere solo 5 valori possibili: **0**, **$Y$**, **$2Y$**, **$-Y$**, **$-2Y$**.
@@ -59,7 +59,7 @@ Il tipo più elementare di codifica Booth migliorata è proprio questa base 4, p
 
 La codifica Booth affronta il primo aspetto dell'ottimizzazione: ridurre il numero di prodotti parziali. Tuttavia, il ritardo di propagazione del riporto (carry propagation delay) degli accumulatori incide ancora significativamente sulle prestazioni. Qui vediamo lo schema utilizzando semplici adder per le somme parziali:
 
-![Radix-4 Booth Multiplier](image_bffb0020.png)
+![Radix-4 Booth Multiplier](img/image_bffb0020.png)
 *(Multiplier Booth Radix-4 with RCA)*
 
 Se si utilizza la somma diretta, il risultato del bit corrente dipende dal riporto del bit precedente. Questo rende l'intero processo seriale e, maggiore è la larghezza del bus, maggiore sarà il ritardo. La chiave per l'ottimizzazione è **eliminare le catene di riporto e parallelizzare l'operazione**.
@@ -68,7 +68,7 @@ Se si utilizza la somma diretta, il risultato del bit corrente dipende dal ripor
 
 La tecnica standard per l'accumulazione parallela è l'utilizzo di sommatori **Carry-Save (CSA)**. A livello logico, un CSA è essenzialmente un *Full Adder* (sommatore completo) a 1 bit, le cui equazioni logiche sono:
 
-![Equazioni Carry-Save Adder](image_c04d3c.png)
+![Equazioni Carry-Save Adder](img/image_c04d3c.png)
 
 $$S_i = A_i \oplus B_i \oplus C_{i-1}$$
 $$C_i = A_i B_i + C_{i-1}(A_i + B_i)$$
@@ -78,13 +78,13 @@ Il vero vantaggio del CSA non risiede nella logica interna, ma in come viene int
 #### Approccio Seriale (Inefficiente)
 Nell'addizione tradizionale a propagazione di riporto (Ripple Carry), l'addizione del primo livello presenta un ritardo causato dalla catena dei riporti. 
 
-![Ripple Carry Adder Chain](image_c05400.png)
+![Ripple Carry Adder Chain](img/image_c05400.png)
 *(Catena di riporto in un sommatore seriale: il ritardo cresce linearmente con il numero di bit)*
 
 #### Approccio Carry-Save / Compressione 3-2 (Efficiente)
 Utilizzando lo stesso hardware del CSA, possiamo riorganizzare l'architettura. Invece di propagare il riporto orizzontalmente allo stadio adiacente, il CSA accetta tre bit della stessa colonna in ingresso e genera due bit in uscita (una *Sum* e un *Carry* per la colonna successiva).
 
-![Carry-Save Adder 3-2 Compression](image_c054ba.png)
+![Carry-Save Adder 3-2 Compression](img/image_c054ba.png)
 *(Architettura Carry-Save: esecuzione parallela senza catena di riporto orizzontale)*
 
 Come mostrato nello schema, il primo stadio dei quattro CSA è **completamente parallelo**. Consuma un solo ritardo logico (gate delay) che *non aumenta* con la larghezza dei bit. Poiché questo blocco accetta tre ingressi e genera due uscite, è noto nella letteratura RTL come **Compressore 3-2** (3-2 compressor).
@@ -93,7 +93,7 @@ Come mostrato nello schema, il primo stadio dei quattro CSA è **completamente p
 
 Applicato al nostro moltiplicatore, il metodo Carry-Save viene utilizzato per raggruppare i prodotti parziali generati da Booth in insiemi di tre. Le uscite (vettori di Somma e Riporto) di ogni stadio vengono a loro volta compresse a cascata, formando una struttura ad albero: l'**Albero di Wallace** (Wallace Tree).
 
-![4-2 Compressor Logic Schematic](image_c0587f.png)
+![4-2 Compressor Logic Schematic](img/image_c0587f.png)
 *(Implementazione a livello di porte logiche di un Compressore 4-2)*
 
 Nei moltiplicatori industriali ad alte prestazioni, per bilanciare meglio i percorsi dei segnali e ridurre ulteriormente gli stadi dell'albero, si utilizzano spesso anche **Compressori 4-2**. Questi blocchi accettano quattro prodotti parziali in ingresso e restituiscono due uscite, gestendo i riporti intermedi internamente in modo ottimizzato.
