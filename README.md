@@ -1,104 +1,102 @@
-# Radix-4 Booth - Wallace Tree Multiplier
+# 32 bit Radix-4 Booth - Wallace Tree Multiplier
 
-Questo repository contiene l'implementazione hardware (RTL) di un moltiplicatore ad alte prestazioni. Il design si basa su due tecniche fondamentali per l'ottimizzazione dell'area e della latenza: la codifica **Modified Booth (Radix-4)** per la riduzione dei prodotti parziali e l'albero di **Wallace** per la loro compressione parallela.
+This repository contains the hardware implementation (RTL) of a high-performance multiplier. The design is based on two fundamental techniques for area and latency optimization: Modified Booth encoding (Radix-4) for partial product reduction and the **Wallace Tree** for their parallel compression.
 
 ---
 
-## 1. Il problema della Moltiplicazione Standard
+## 1. The Standard Multiplication Problem
 
-Nella moltiplicazione binaria tradizionale, il numero di prodotti parziali generati è esattamente uguale al numero di bit del moltiplicatore. 
-
+In traditional binary multiplication, the number of generated partial products is exactly equal to the number of bits in the multiplier.
 ![Standard Multiplication](img/image_bff6a4.png)
-*(Rappresentazione della generazione dei prodotti parziali in una moltiplicazione standard)*
+*(Representation of partial product generation in a standard multiplication)*
 
-Come mostrato nell'immagine, per ogni bit del moltiplicatore viene generato un prodotto parziale (che può essere il moltiplicando stesso o zero). Il problema principale nella progettazione hardware è che il numero di sommatori necessari dipende direttamente dal numero di prodotti parziali. Pertanto, sommare $N$ prodotti parziali in cascata introduce un notevole ritardo critico (critical path) e consuma molta area sul silicio.
-
+As shown in the image, for every bit of the multiplier, a partial product is generated (which can be the multiplicand itself or zero). The main problem in hardware design is that the number of required adders depends directly on the number of partial products. Therefore, summing $N$ partial products in cascade introduces a significant critical path delay and consumes a large amount of silicon area.
 ---
 
-## 2. Da Booth alla codifica "Modified Booth" (Radix-4)
+## 2. From Booth to "Modified Booth" Encoding (Radix-4)
 
-### La Trasformata di Booth originale
-La trasformata di Booth sfrutta una proprietà matematica dei numeri binari: sequenze di 1 consecutivi possono essere riscritte come una sottrazione. Ad esempio: 
+### The Original Booth Transform
+The Booth transform leverages a mathematical property of binary numbers: sequences of consecutive 1s can be rewritten as a subtraction. For example:
 
 **01111110 = 10000000 - 10**
 
-Maggiore è il numero di 1 consecutivi, migliore è la semplificazione. Tuttavia, questa trasformazione di base non ottimizza realmente il circuito hardware. Il numero effettivo di addizionatori necessari rimane invariato rispetto al numero di bit del moltiplicatore originale, poiché la struttura dell'hardware deve essere dimensionata per il caso peggiore.
+The greater the number of consecutive 1s, the better the simplification. However, this basic transformation does not truly optimize the hardware circuit. The actual number of required adders remains unchanged relative to the number of bits in the original multiplier, as the hardware structure must be sized for the worst-case scenario.
 
-### Il Metodo di codifica Booth Migliorato (Radix-4)
-Per ridurre *fisicamente* il numero di prodotti parziali e quindi il numero di accumulatori, si utilizza il **Modified Booth Encoding** (Radix-4).
+### The Improved Booth Encoding Method (Radix-4)
+To physically reduce the number of partial products and therefore the number of accumulators, **Modified Booth Encoding (Radix-4)** is used.
 
-Il numero binario del moltiplicatore $X$ viene raggruppato in gruppi di 3 bit partendo dal bit meno significativo (LSB). Regole di raggruppamento:
-* Il bit meno significativo del primo gruppo viene integrato con un bit fittizio $x_{-1}$ impostato a **0**.
-* I gruppi adiacenti si sovrappongono di un bit (il bit più significativo del gruppo precedente diventa il bit meno significativo del gruppo successivo).
+The binary number of the multiplier $X$ is grouped into 3-bit sets starting from the least significant bit (LSB). Grouping rules:
+* The least significant bit of the first group is integrated with a dummy bit $x_{-1}$ is set to **0**.
+* Adjacent groups overlap by one bit (the most significant bit of the previous group becomes the least significant bit of the next group).
 
-Questo metodo **dimezza** il numero di prodotti parziali. Ad esempio, in una moltiplicazione a 32 bit, anziché generare 32 prodotti parziali da sommare, se ne generano solo 16 (o 17 nel caso di numeri senza segno compatibili). 
+This method **halves** the number of partial products. For example, in a 32-bit multiplication, instead of generating 32 partial products to sum, only 16 are generated (or 17 in the case of compatible unsigned numbers). 
 
 ---
 
-## 3. Generazione dei Prodotti Parziali
+## 3. Partial Product Generation
 
-La relazione tra ogni gruppo di 3 bit consecutivi determina l'operazione da eseguire sul moltiplicando $Y$. Siano $x_{2i+1}$, $x_{2i}$ e $x_{2i-1}$ i tre bit consecutivi del moltiplicatore $X$, e sia $PP_i$ il prodotto parziale generato all'i-esimo passo. 
+The relationship between each group of 3 consecutive bits determines the operation to be performed on the multiplicand $Y$. Let $x_{2i+1}$, $x_{2i}$, and $x_{2i-1}$ be the three consecutive bits of the multiplier $X$, and let $PP_i$ be the partial product generated at the i-th step. 
 
-La seguente tabella di verità mostra le operazioni necessarie:
+The following truth table shows the required operations:
 
 ![Radix-4 Booth Encoding Truth Table](img/image_bffb00.png)
-*(Tabella di look-up per la codifica Booth Radix-4)*
+*(Look-up table for Radix-4 Booth encoding)*
 
-Basandosi su queste combinazioni, il prodotto parziale può assumere solo 5 valori possibili: **0**, **$Y$**, **$2Y$**, **$-Y$**, **$-2Y$**.
+Based on these combinations, the partial product can take only 5 possible values: 0, $Y$, $2Y$, $-Y$, $-2Y$.
 
-**Vantaggi hardware di questa implementazione:**
-* **$Y$ e $0$**: Passaggio diretto o azzeramento.
-* **$2Y$**: In binario, la moltiplicazione per 2 si ottiene a costo zero hardware con un semplice **shift a sinistra di 1 bit** (left shift).
-* **Valori negativi ($-Y$, $-2Y$)**: Si ottengono calcolando il complemento a due (inversione dei bit + somma di 1 nel LSB dell'addizionatore successivo).
+**Hardware advantages of this implementation:**
+* $Y$ and $0$: Direct pass or zeroing.
+* $2Y$: In binary, multiplication by 2 is achieved at zero hardware cost with a simple **1-bit left shift (left shift)**.
+* Negative values ($-Y$, $-2Y$): These are obtained by calculating the two's complement (bit inversion + adding 1 in the LSB of the subsequent adder).
 
-Il tipo più elementare di codifica Booth migliorata è proprio questa base 4, poiché non richiede alcun addizionatore extra per generare i prodotti parziali (cosa che invece avverrebbe in un Booth di ordine superiore per generare, ad esempio, un multiplo come $3Y$). Questo la rende la scelta ottimale per bilanciare la riduzione dei prodotti parziali e la semplicità del circuito generatore.
+The most elementary type of improved Booth encoding is precisely this Radix-4, as it does not require any extra adders to generate the partial products (which would happen in a higher-order Booth to generate, for example, a multiple like $3Y$). This makes it the optimal choice for balancing partial product reduction and the simplicity of the generator circuit.
 
 ---
 
-## 4. L'Albero di Wallace (Wallace Tree Compression)
+##4. The Wallace Tree (Wallace Tree Compression)
 
-La codifica Booth affronta il primo aspetto dell'ottimizzazione: ridurre il numero di prodotti parziali. Tuttavia, il ritardo di propagazione del riporto (carry propagation delay) degli accumulatori incide ancora significativamente sulle prestazioni. Qui vediamo lo schema utilizzando semplici adder per le somme parziali:
+Booth encoding addresses the first aspect of optimization: reducing the number of partial products. However, the carry propagation delay of the accumulators still significantly impacts performance. Here we see the scheme using simple adders for partial sums:
 
 ![Radix-4 Booth Multiplier](img/image_bffb0020.png)
 *(Multiplier Booth Radix-4 with RCA)*
 
-Se si utilizza la somma diretta, il risultato del bit corrente dipende dal riporto del bit precedente. Questo rende l'intero processo seriale e, maggiore è la larghezza del bus, maggiore sarà il ritardo. La chiave per l'ottimizzazione è **eliminare le catene di riporto e parallelizzare l'operazione**.
+If direct summation is used, the result of the current bit depends on the carry from the previous bit. This makes the entire process serial and, the wider the bus, the greater the delay will be. The key to optimization is **eliminating carry chains and parallelizing the operation**.
 
-### Il Sommatore Carry-Save (CSA)
+### The Carry-Save Adder (CSA)
 
-La tecnica standard per l'accumulazione parallela è l'utilizzo di sommatori **Carry-Save (CSA)**. A livello logico, un CSA è essenzialmente un *Full Adder* (sommatore completo) a 1 bit, le cui equazioni logiche sono:
+The standard technique for parallel accumulation is the use of Carry-Save Adders (CSA). At a logical level, a CSA is essentially a 1-bit **Full Adder** (complete adder), whose logical equations are:
 
-![Equazioni Carry-Save Adder](img/image_c04d3c.png)
+![Carry-Save Adder equations](img/image_c04d3c.png)
 
 $$S_i = A_i \oplus B_i \oplus C_{i-1}$$
 $$C_i = A_i B_i + C_{i-1}(A_i + B_i)$$
 
-Il vero vantaggio del CSA non risiede nella logica interna, ma in come viene interconnesso nel circuito. Per capirlo, supponiamo di dover sommare tre numeri a 4 bit: $A[3:0]$, $B[3:0]$ e $C[3:0]$.
+The real advantage of the CSA does not lie in its internal logic, but in how it is interconnected in the circuit. To understand this, let's suppose we need to sum three 4-bit numbers: $A[3:0]$, $B[3:0]$, and $C[3:0]$.
 
-#### Approccio Seriale (Inefficiente)
-Nell'addizione tradizionale a propagazione di riporto (Ripple Carry), l'addizione del primo livello presenta un ritardo causato dalla catena dei riporti. 
+#### Serial Approach (Inefficient)
+In traditional Ripple Carry addition, the first-level addition presents a delay caused by the carry chain.
 
 ![Ripple Carry Adder Chain](img/image_c05400.png)
-*(Catena di riporto in un sommatore seriale: il ritardo cresce linearmente con il numero di bit)*
+*(Carry chain in a serial adder: the delay increases linearly with the number of bits)*
 
-#### Approccio Carry-Save / Compressione 3-2 (Efficiente)
-Utilizzando lo stesso hardware del CSA, possiamo riorganizzare l'architettura. Invece di propagare il riporto orizzontalmente allo stadio adiacente, il CSA accetta tre bit della stessa colonna in ingresso e genera due bit in uscita (una *Sum* e un *Carry* per la colonna successiva).
+#### Carry-Save Approach / 3-2 Compression (Efficient)
+Using the same CSA hardware, we can reorganize the architecture. Instead of propagating the carry horizontally to the adjacent stage, the CSA accepts three bits from the same column as input and generates two bits as output (a Sum and a Carry for the next column).
 
 ![Carry-Save Adder 3-2 Compression](img/image_c054ba.png)
-*(Architettura Carry-Save: esecuzione parallela senza catena di riporto orizzontale)*
+*(Carry-Save Architecture: parallel execution without horizontal carry chains)*
 
-Come mostrato nello schema, il primo stadio dei quattro CSA è **completamente parallelo**. Consuma un solo ritardo logico (gate delay) che *non aumenta* con la larghezza dei bit. Poiché questo blocco accetta tre ingressi e genera due uscite, è noto nella letteratura RTL come **Compressore 3-2** (3-2 compressor).
+As shown in the diagram, the first stage of the four CSAs is completely parallel. It consumes only a single logic delay (gate delay) that does not increase with bit width. Since this block accepts three inputs and generates two outputs, it is known in RTL literature as a **3-2 Compressor (3-2 compressor**).
 
-### Architettura dell'Albero e Compressori Avanzati
+### Tree Architecture and Advanced Compressors
 
-Applicato al nostro moltiplicatore, il metodo Carry-Save viene utilizzato per raggruppare i prodotti parziali generati da Booth in insiemi di tre. Le uscite (vettori di Somma e Riporto) di ogni stadio vengono a loro volta compresse a cascata, formando una struttura ad albero: l'**Albero di Wallace** (Wallace Tree).
+Applied to our multiplier, the Carry-Save method is used to group the partial products generated by Booth into sets of three. The outputs (Sum and Carry vectors) of each stage are in turn compressed in cascade, forming a **tree structure: the Wallace Tree**.
 
 ![4-2 Compressor Logic Schematic](img/image_c0587f.png)
-*(Implementazione a livello di porte logiche di un Compressore 4-2)*
+*(Logic gate level implementation of a 4-2 Compressor)*
 
-Nei moltiplicatori industriali ad alte prestazioni, per bilanciare meglio i percorsi dei segnali e ridurre ulteriormente gli stadi dell'albero, si utilizzano spesso anche **Compressori 4-2**. Questi blocchi accettano quattro prodotti parziali in ingresso e restituiscono due uscite, gestendo i riporti intermedi internamente in modo ottimizzato.
+In high-performance industrial multipliers, to better balance signal paths and further reduce tree stages, 4-2 Compressors are also often used. These blocks accept four partial products as input and return two outputs, handling intermediate carries internally in an optimized way.
 
-### Lo Stadio Finale (Final Addition)
-Il processo di compressione nell'Albero di Wallace continua in modo puramente combinatorio e parallelo finché non si raggiungono esattamente **due righe finali** (un vettore *Sum* e un vettore *Carry*). 
+### The Final Addition Stage
+The compression process in the Wallace Tree continues in a purely combinatorial and parallel way until exactly **two final rows** are reached **(a Sum vector and a Carry vector)**.
 
-Poiché la compressione di Wallace non può ridurre 2 righe in 1 singola riga senza propagare i riporti, queste due ultime righe vengono sommate utilizzando un tradizionale ma velocissimo **Sommatore a Propagazione Veloce** (es. *Carry Look-Ahead Adder* o *Kogge-Stone Adder*) per ottenere il prodotto finale a 64 bit.
+Since Wallace compression cannot reduce 2 rows into 1 single row without propagating carries, these last two rows are summed using a traditional but extremely fast Fast Carry Propagation Adder (e.g., Carry Look-Ahead Adder or Kogge-Stone Adder) to obtain the final 64-bit product.
