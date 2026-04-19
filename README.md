@@ -102,7 +102,7 @@ In high-performance industrial multipliers, to better balance signal paths and f
 ### The Final Addition Stage
 The compression process in the Wallace Tree continues in a purely combinatorial and parallel way until exactly **two final rows** are reached **(a Sum vector and a Carry vector)**. Here we can see the dot example of a 8 bit wallace tree reduction:
 
-![dot reduction](img/wallace_tree_reduction.jpg)
+![dot reduction](img/wallace_tree_mul.png)
 
 *(Dot diagram showing the level-by-level compression of partial products until only two rows remain)*
 
