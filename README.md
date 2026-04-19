@@ -7,6 +7,7 @@ This repository contains the hardware implementation (RTL) of a high-performance
 ## 1. The Standard Multiplication Problem
 
 In traditional binary multiplication, the number of generated partial products is exactly equal to the number of bits in the multiplier.
+
 ![Standard Multiplication](img/image_bff6a4.png)
 *(Representation of partial product generation in a standard multiplication)*
 
