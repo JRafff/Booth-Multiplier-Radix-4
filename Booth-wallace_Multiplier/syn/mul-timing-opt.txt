@@ -1,0 +1,165 @@
+Information: Updating design information... (UID-85)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : BOOTHMUL
+Version: W-2024.09-SP2
+Date   : Thu Apr 23 15:16:36 2026
+****************************************
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: B[27] (input port)
+  Endpoint: Y[56] (output port)
+  Path Group: default
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  BOOTHMUL           5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  input external delay                                    0.00       0.00 r
+  B[27] (in)                                              0.00       0.00 r
+  ENC_I_13/A[2] (ENC_BOOTH_3)                             0.00       0.00 r
+  ENC_I_13/U4/ZN (INV_X1)                                 0.02       0.02 f
+  ENC_I_13/U7/ZN (AOI21_X1)                               0.05       0.07 r
+  ENC_I_13/U11/ZN (AND2_X1)                               0.07       0.14 r
+  ENC_I_13/Y[2] (ENC_BOOTH_3)                             0.00       0.14 r
+  MUX_I_13/SEL[2] (MUX5to1_N33_3)                         0.00       0.14 r
+  MUX_I_13/U132/ZN (NOR3_X1)                              0.04       0.18 f
+  MUX_I_13/U25/Z (BUF_X2)                                 0.06       0.24 f
+  MUX_I_13/U87/ZN (AOI222_X1)                             0.12       0.37 r
+  MUX_I_13/U147/ZN (NAND2_X1)                             0.04       0.41 f
+  MUX_I_13/Y[7] (MUX5to1_N33_3)                           0.00       0.41 f
+  FA_106/B (FA_355)                                       0.00       0.41 f
+  FA_106/U4/Z (XOR2_X1)                                   0.08       0.49 f
+  FA_106/U2/ZN (AOI22_X1)                                 0.06       0.55 r
+  FA_106/U1/ZN (INV_X1)                                   0.03       0.58 f
+  FA_106/Co (FA_355)                                      0.00       0.58 f
+  FA_267/B (FA_217)                                       0.00       0.58 f
+  FA_267/U4/Z (XOR2_X1)                                   0.08       0.66 f
+  FA_267/U2/ZN (AOI22_X1)                                 0.06       0.72 r
+  FA_267/U1/ZN (INV_X1)                                   0.03       0.74 f
+  FA_267/Co (FA_217)                                      0.00       0.74 f
+  FA_383/B (FA_127)                                       0.00       0.74 f
+  FA_383/U4/Z (XOR2_X1)                                   0.07       0.82 f
+  FA_383/U2/ZN (AOI22_X1)                                 0.06       0.88 r
+  FA_383/U1/ZN (INV_X1)                                   0.03       0.90 f
+  FA_383/Co (FA_127)                                      0.00       0.90 f
+  FA_467/A (FA_63)                                        0.00       0.90 f
+  FA_467/U4/Z (XOR2_X1)                                   0.08       0.98 f
+  FA_467/U2/ZN (AOI22_X1)                                 0.06       1.04 r
+  FA_467/U1/ZN (INV_X1)                                   0.03       1.07 f
+  FA_467/Co (FA_63)                                       0.00       1.07 f
+  FA_531/A (FA_25)                                        0.00       1.07 f
+  FA_531/U4/Z (XOR2_X1)                                   0.07       1.14 f
+  FA_531/U2/ZN (AOI22_X1)                                 0.06       1.20 r
+  FA_531/U1/ZN (INV_X1)                                   0.03       1.23 f
+  FA_531/Co (FA_25)                                       0.00       1.23 f
+  FA_590/A (FA_3)                                         0.00       1.23 f
+  FA_590/U4/Z (XOR2_X1)                                   0.07       1.30 f
+  FA_590/U5/ZN (AOI22_X1)                                 0.06       1.36 r
+  FA_590/U3/ZN (INV_X1)                                   0.05       1.41 f
+  FA_590/Co (FA_3)                                        0.00       1.41 f
+  CLA_adder/A[39] (P4_ADDER_NBIT64)                       0.00       1.41 f
+  CLA_adder/P4_CARRY_GENERATOR/A[39] (carryGEN_N64_Ncarry4_LEVELS5)
+                                                          0.00       1.41 f
+  CLA_adder/P4_CARRY_GENERATOR/m_pgNetwork/A[39] (pg_network_N64)
+                                                          0.00       1.41 f
+  CLA_adder/P4_CARRY_GENERATOR/m_pgNetwork/U100/Z (XOR2_X1)
+                                                          0.09       1.50 f
+  CLA_adder/P4_CARRY_GENERATOR/m_pgNetwork/p[39] (pg_network_N64)
+                                                          0.00       1.50 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_0_39/P_ik (PG_block_45)
+                                                          0.00       1.50 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_0_39/U3/ZN (AOI21_X1)
+                                                          0.04       1.54 r
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_0_39/U2/ZN (INV_X1)
+                                                          0.02       1.56 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_0_39/G_ij (PG_block_45)
+                                                          0.00       1.56 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_1_39/G_ik (PG_block_24)
+                                                          0.00       1.56 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_1_39/U2/ZN (AOI21_X1)
+                                                          0.05       1.62 r
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_1_39/U3/ZN (INV_X1)
+                                                          0.02       1.64 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_1_39/G_ij (PG_block_24)
+                                                          0.00       1.64 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_2_39/G_ik (PG_block_14)
+                                                          0.00       1.64 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_2_39/U3/ZN (AOI21_X1)
+                                                          0.05       1.69 r
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_2_39/U2/ZN (INV_X1)
+                                                          0.04       1.73 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_2_39/G_ij (PG_block_14)
+                                                          0.00       1.73 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_3_47/G_kj (PG_block_7)
+                                                          0.00       1.73 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_3_47/U3/ZN (AOI21_X1)
+                                                          0.05       1.78 r
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_3_47/U2/ZN (INV_X1)
+                                                          0.03       1.81 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_3_47/G_ij (PG_block_7)
+                                                          0.00       1.81 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_4_55/G_kj (PG_block_3)
+                                                          0.00       1.81 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_4_55/U3/ZN (AOI21_X1)
+                                                          0.05       1.86 r
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_4_55/U2/ZN (INV_X1)
+                                                          0.04       1.90 f
+  CLA_adder/P4_CARRY_GENERATOR/inst_PG_4_55/G_ij (PG_block_3)
+                                                          0.00       1.90 f
+  CLA_adder/P4_CARRY_GENERATOR/c_out[13] (carryGEN_N64_Ncarry4_LEVELS5)
+                                                          0.00       1.90 f
+  CLA_adder/P4_SUM_GENERATOR/Cin[14] (SUM_GENERATOR_NBIT_PER_BLOCK4_NBLOCKS16)
+                                                          0.00       1.90 f
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/Cin_eff (CSB_N4_2)
+                                                          0.00       1.90 f
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/SEL (MUX21_GENERIC_NBIT4_2)
+                                                          0.00       1.90 f
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/UIV/A (IV_2)
+                                                          0.00       1.90 f
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/UIV/U1/ZN (INV_X1)
+                                                          0.05       1.94 r
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/UIV/Y (IV_2)
+                                                          0.00       1.94 r
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/UND2/b[0] (ND2_GENERIC_NBIT4_5)
+                                                          0.00       1.94 r
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/UND2/U3/ZN (NAND2_X1)
+                                                          0.03       1.98 f
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/UND2/y[0] (ND2_GENERIC_NBIT4_5)
+                                                          0.00       1.98 f
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/UND3/b[0] (ND2_GENERIC_NBIT4_4)
+                                                          0.00       1.98 f
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/UND3/U3/ZN (NAND2_X1)
+                                                          0.02       2.00 r
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/UND3/y[0] (ND2_GENERIC_NBIT4_4)
+                                                          0.00       2.00 r
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/MUX_1/Y[0] (MUX21_GENERIC_NBIT4_2)
+                                                          0.00       2.00 r
+  CLA_adder/P4_SUM_GENERATOR/CSB_block_15/S[0] (CSB_N4_2)
+                                                          0.00       2.00 r
+  CLA_adder/P4_SUM_GENERATOR/S[56] (SUM_GENERATOR_NBIT_PER_BLOCK4_NBLOCKS16)
+                                                          0.00       2.00 r
+  CLA_adder/S[56] (P4_ADDER_NBIT64)                       0.00       2.00 r
+  Y[56] (out)                                             0.00       2.00 r
+  data arrival time                                                  2.00
+
+  max_delay                                               2.00       2.00
+  output external delay                                   0.00       2.00
+  data required time                                                 2.00
+  --------------------------------------------------------------------------
+  data required time                                                 2.00
+  data arrival time                                                 -2.00
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.00
+
+
+1
